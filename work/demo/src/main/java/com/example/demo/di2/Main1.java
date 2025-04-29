@@ -14,6 +14,7 @@ class Engine{};
 class AppContext{
 	Map map;	// 객체 저장소
 	public AppContext() {
+		// 객체를 메모리에 미리 올려두고 시작한다
 		map = new HashMap();
 		map.put("car", new SportCar());
 		map.put("engine", new Engine());
