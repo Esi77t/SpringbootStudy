@@ -63,6 +63,7 @@ public class TodoController {
 			List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 			
 			// 변환된 TodoDTO리스트를 이용해 responseDTO를 초기화한다
+			// error문자열과 List<T> data 필드 두가지를 가지고 있다
 			ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
 			
 			return ResponseEntity.ok().body(response);
