@@ -21,6 +21,7 @@ public class ProductService {
 	public List<ProductEntity> create(final ProductEntity entity) {
 		validate(entity);
 		
+		// jpa에 데이터를 전달할 때는 Entity 타입이어야 한다
 		repository.save(entity);
 		return repository.findAll();
 	}

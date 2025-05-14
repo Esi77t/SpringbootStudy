@@ -19,15 +19,15 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("product")
+@RequestMapping("products")
 public class ProductController {
 	private final ProductService service;
 	
 	@GetMapping
 	public ResponseEntity<?> productList() {
 		List<ProductEntity> entity = service.findAll();
-		List<ProductDTO> dto = entity.stream().map(ProductDTO::new).collect(Collectors.toList());
-		ResponseDTO<ProductDTO> response = ResponseDTO.<ProductDTO>builder().data(dto).build();
+		List<ProductDTO> dtos = entity.stream().map(ProductDTO::new).collect(Collectors.toList());
+		ResponseDTO<ProductDTO> response = ResponseDTO.<ProductDTO>builder().data(dtos).build();
 		return ResponseEntity.ok().body(response);
 	}
 	
@@ -45,6 +45,7 @@ public class ProductController {
 			
 			return ResponseEntity.badRequest().body(response);
 		}
-		
 	}
+	
+	
 }
