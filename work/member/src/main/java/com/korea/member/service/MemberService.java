@@ -1,5 +1,6 @@
 package com.korea.member.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,36 +20,50 @@ public class MemberService {
 	
 	// 전체 회원 조회
 	public List<MemberDTO> getAllMembers() {
-		return repository.findAll().stream().map(MemberDTO::new).collect(Collectors.toList());
+		return repository.findAll().stream().map(MemberDTO::fromEntity).collect(Collectors.toList());
 	}
 	
 	// 특정회원 조회
-	public MemberDTO getMemberByEmail(String email) {
-		Optional<MemberEntity> entity = repository.findByEmail(email);
-		
-		return entity.map(MemberDTO::new).orElse(null);
+	public List<MemberDTO> getMemberByEmail(String email) {
+		Optional<MemberEntity> option = repository.findByEmail(email);
+		MemberDTO dto = null;
+		if(option.isPresent()) {
+			MemberEntity entity = option.get();
+			dto = MemberDTO.fromEntity(entity);
+		}
+		return Arrays.asList(dto);
 	}
 	
 	public List<MemberDTO> addMember(MemberDTO dto) {
-		MemberEntity entity = dto.toEntity(dto);
+		MemberEntity entity = MemberEntity.builder()
+								.name(dto.getName())
+								.email(dto.getEmail())
+								.password(dto.getPassword())
+								.build();
 		repository.save(entity);
 		
 		return getAllMembers();
 	}
 	
 	public List<MemberDTO> updatePasswordByEmail(String email, String newPassword) {
-		Optional<MemberEntity> entity = repository.findByEmail(email);
+		Optional<MemberEntity> option = repository.findByEmail(email);
 		
-		entity.ifPresent(member -> {
-			member.setPassword(newPassword);
-			repository.save(member);
-		});
+		if(option.isPresent()) {
+			MemberEntity entity = option.get();
+			entity.setPassword(newPassword);
+			repository.save(entity);
+		}
 		
 		return getAllMembers();
 	}
 	
 	public List<MemberDTO> deleteMember(int id) {
-		repository.deleteById(id);
-		return getAllMembers();
+		if(repository.existsById(id)) {
+			repository.deleteById(id);
+		} else {
+			throw new RuntimeException("조회된 회원이 없습니다");
+		}
+		
+		return null;
 	}
 }

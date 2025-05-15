@@ -2,7 +2,6 @@ package com.korea.member.dto;
 
 import com.korea.member.model.MemberEntity;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,20 +15,19 @@ public class MemberDTO {
 	
 	private int id;
 	private String name;
-	
-	@Column(nullable=false, unique=true)
 	private String email;
-	
 	private String password;
 	
-	public MemberDTO(MemberEntity entity) {
-		this.id = entity.getId();
-		this.name = entity.getName();
-		this.email = entity.getEmail();
-		this.password = entity.getPassword();
+	public static MemberDTO fromEntity(MemberEntity entity) {
+		return MemberDTO.builder()
+				.id(entity.getId())
+				.name(entity.getName())
+				.email(entity.getEmail())
+				.password(entity.getPassword())
+				.build();
 	}
 	
-	public MemberEntity toEntity(MemberDTO dto) {
+	public static MemberEntity toEntity(MemberDTO dto) {
 		return MemberEntity.builder()
 				.id(dto.getId())
 				.name(dto.getName())
