@@ -1,6 +1,7 @@
 package com.example.board.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -27,10 +28,39 @@ public class BoardService {
 		return getAllPosts();
 	}
 
-	public List<BoardDTO> deletePost(BoardEntity entity) {
+	public boolean deletePost(long id) {
+		Optional<BoardEntity> option = repository.findById(id);
+		if(option.isPresent()) {
+			repository.delete(option.get());
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public BoardDTO findPostById(long id) {
+		Optional<BoardEntity> option = repository.findById(id);
 		
-		repository.delete(entity);
+		BoardEntity list = option.get();
 		
-		return getAllPosts();
-	}	
+		return BoardDTO.fromEntity(list);
+	}
+
+	public boolean upadatePost(long id, BoardDTO dto) {
+		Optional<BoardEntity> option = repository.findById(id);
+		if(option.isPresent()) {
+			BoardEntity entity = option.get();
+			entity.setTitle(dto.getTitle());
+			entity.setAuthor(dto.getAuthor());
+			entity.setContent(dto.getContent());
+			entity.setWritingTime(dto.getWritingTime());
+			repository.save(entity);
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+
+
 }
