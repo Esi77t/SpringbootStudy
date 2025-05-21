@@ -17,8 +17,5 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 	private final UserService service;
 	
-	@PostMapping("/register")
-	public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO dto) {
-		service.registerUser(dto);
-	}
+
 }
