@@ -52,7 +52,7 @@ public class TodoController {
 			// String tempararyUserId = "temporary-user";	// 임시 유저 아이디
 			
 			// TodoDTO객체를 TodoEntity객체로 변환한다
-			TodoEntity entity = dto.toEntity(dto);
+			TodoEntity entity = TodoDTO.toEntity(dto);
 			
 			// id값을 null로 설정하여 entity가 새로운 데이터임을 보장한다
 			entity.setId(null);

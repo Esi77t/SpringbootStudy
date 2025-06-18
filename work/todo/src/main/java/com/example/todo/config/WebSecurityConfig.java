@@ -13,6 +13,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.example.todo.security.OAuthUserServiceImpl;
 import com.example.todo.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity	// 스프링 시큐리티 필터 체인과 설정을 활성화 한다
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+	
+	private final OAuthUserServiceImpl oAuthUserServiceImpl;
 	
 	// 필터 클래스 주입
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -40,11 +43,19 @@ public class WebSecurityConfig {
 			.authorizeHttpRequests(authorizeRequestConfigurer -> authorizeRequestConfigurer
 					// 특정 URL패턴을 로그인 유무나 권한 상관없이 누구나 접근할 수 있다
 					// "/" : 루트 경로, "/auth/**" : /auth/로 시작하는 모든 하위경로
-					.requestMatchers("/", "auth/**")
+					.requestMatchers("/", "auth/**", "/oauth2/**")
 					.permitAll()
 					// 위에 선언된 URL패턴 이외의 모든 요청은 인증된 사용자만 접근이 가능하다
 					.anyRequest()
-					.authenticated());
+					.authenticated())
+			.oauth2Login()	// oauth2 로그인 설정
+			.redirectionEndpoint()
+			.baseUri("/oauth2/callback/*")
+			// http://localhost:5000/oauth2/callback/*으로 들어오는 요청을 redirectionEndpoint에 설정된 곳으로 리다이렉트하라는 뜻
+			// 아무 주소도 넣지 않았다면 baseUri인 "http://localhost:5000으로 리다이렉트 한다
+			.and()
+			.userInfoEndpoint()	// OAuth2 인증이 성공한 후, 사용자 프로필 데이터를 엔드포인트로 지정
+			.userService(oAuthUserServiceImpl);  // 사용자 정보를 처리하는 서비스를 지정
 		
 		// 스프링 시큐리티 필터체인에 우리가 만든 필터를 삽입하는 위치를 지정하는 설정
 		// jwtAuthenticationFilter가 UsernamePasswordAuthenticationFilter 이전에 실행되는 것을 보장한다
@@ -61,7 +72,7 @@ public class WebSecurityConfig {
 		// 허용할 출처(Origin) 지정
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://todoapplication-frontend-env-env.eba-mx6qwm6u.ap-northeast-2.elasticbeanstalk.com"));
 		// 허용할 메서드 지정
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		// 허용할 요청 헤더 지정 ("*"는 모든 헤더를 허용하겠다는 의미)
 		configuration.setAllowedHeaders(Arrays.asList("*"));
 		// 자격증명 허용 여부

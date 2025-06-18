@@ -19,7 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		// allowedOrigins("http://localhos:3000") : React 애플리케이션이 실행되는 도메인에서 오는 요청을 허용
 			.allowedOrigins("http://localhost:3000")
 		// allowedMethods("GET","PUT","POST","DELETE") : HTTP 메서드를 허용
-			.allowedMethods("GET","PUT","POST","DELETE")
+			.allowedMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
 		// allowedHeaders("*") : 모든 헤더를 허용
 			.allowedHeaders("*")
 		// allowCredentials(true) : 쿠키나 인증 정보를 포함한 요청을 허용

@@ -55,7 +55,7 @@ public class UserController {
 			return ResponseEntity.ok(responseUserDTO);
 		} catch (Exception e) {
 			// 예외가 발생한 경우, 에러 메시지를 포함한 ResponseDTO객체를 만들어 응답에 보낸다
-			ResponseDTO responseDTO = ResponseDTO.builder()
+			ResponseDTO<?> responseDTO = ResponseDTO.builder()
 					.error(e.getMessage())
 					.build();
 			return ResponseEntity
@@ -90,7 +90,7 @@ public class UserController {
 			return ResponseEntity.ok().body(responseUserDTO);
 		} else {
 			// 조회된 유저가 없거나, 인증에 실패한 경우 에러 메시지를 포함한 ResponseDTO를 반환한다
-			ResponseDTO responseDTO = ResponseDTO.builder()
+			ResponseDTO<?> responseDTO = ResponseDTO.builder()
 										.error("Login Failed")
 										.build();
 			return ResponseEntity.badRequest().body(responseDTO);
