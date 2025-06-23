@@ -28,7 +28,10 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		TokenProvider tokenProvider = new TokenProvider();
 		String token = tokenProvider.create(authentication);
 		
-		response.getWriter().write(token);
 		log.info("token {}", token);
+		
+		// 프론트엔드로 리다이렉트를 할 수 있겠으나 토큰을 전달할 수는 없다
+		// 프론트엔드는 백엔드가 리다이렉트 하면서 전달하는 토큰을 받아주는 기능이 필요하다
+		response.sendRedirect("http://localhost:3000");
 	}
 }

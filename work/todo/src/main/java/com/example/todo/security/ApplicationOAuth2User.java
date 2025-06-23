@@ -1,12 +1,17 @@
 package com.example.todo.security;
 
 import java.util.Collection;
+
 import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+
+// authentication에는 UserEntity의 id가 없다
+// 이를 해결하기 위해 OAuth2User를 구현하는 새 클래스를 작성해야 한다
+// 이 클래스는 OAuth2User와 UserEntity 사이의 다리 같은 역할을 한다
 
 // OAuth2User
 // OAuth2.0 로그인 과정을 처리할 때 사용하는 인터페이스

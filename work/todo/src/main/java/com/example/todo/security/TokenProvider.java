@@ -1,11 +1,9 @@
 package com.example.todo.security;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +27,6 @@ public class TokenProvider {
 	// 비밀 키
 	private static final String SECRET_KEY = "4b0dc6da6da745d6647e166a12250472f741778272229ec2a5f3523cc39cfbffff5e0fc7999fd8a047a0446182f206fb7f7062097f8dba098e742f03cd4c11da3948fecab2a233c0146f169b20696d4aaad01878d00dfe23cdca1713d1e630829dde0df8f85ab44cf819ea6cef867df3f09e0488188af56a0ece8119be137de505125ccbfcaa64108fcc25a3a5621ebb99286453645bb9fd1e288c18d79524d247d51c95c3f99aefca4a3f50133b5e6ec7c3f364b5a6892106f84b5637e298150fe24414e09f9be1efbf5a0f7ed4304088e657b7bbcf6f9dff05d3f7b8e6603519c3e3453f132a1b83b9a84a7fb797f0375b59950858d4e77eeaeb44e4e142e8a9e9a4fad66b47a730d5fa8ced184de72e42afba3345b8b879baafcc1a74806ed3b00cb177cd27b8236f40b334f6b8f6d8c1f21482e0e4c14226b00ae1187d5f5238375e858f7df3655cf41ae24ece860d941ef7a7c8393e13d182195901add4d69377c249b5c39e26e27aaf536bcc67bfd28c65435f4253a4998b9a4d0de0bbe62095fa52d7b924abb4959bb05472e1ba597868cfbfc2ab739e96eabf93e884e34ada62897ccdcbcef6fcbed9bc4a61a2f9eb1c2146546ea11cb398b2c856b267b2716f15e9017f32acd963a2188863865cc5af3753fda84be3f6adee91d7fad376bf9be1391012b1ec97cf55d616e636f05681baa82976fef854cd71e630ec";
 	
-	@Autowired
-	private UserPrincipal userPrincipal;
-	
 	public String create(UserEntity entity) {
 		// 토큰 만료 시간
 		// 현재 시각 + 1일
@@ -53,6 +48,16 @@ public class TokenProvider {
 	
 	// 토큰을 생성하는 create메서드 오버로딩하기
 	public String create(Authentication authentication) {
+		
+		// authentication
+		// principal(사용자정보)
+		// Authorities(권한 목록)
+		// isAuthenticated(인증여부)
+		// details(세션 정보 등)
+		
+		// 시큐리티의 인증 객체에서 사용자 정보를 추출
+		ApplicationOAuth2User userPrincipal = (ApplicationOAuth2User) authentication.getPrincipal();
+		
 		// 토큰 만료 날짜
 		Date expiryDate = Date.from(Instant.now().plus(1,ChronoUnit.DAYS));
 		

@@ -2,19 +2,22 @@ package com.example.todo.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.example.todo.security.OAuthUserServiceImpl;
 import com.example.todo.security.JwtAuthenticationFilter;
+import com.example.todo.security.OAuthSuccessHandler;
+import com.example.todo.security.OAuthUserServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,10 +26,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 	
-	private final OAuthUserServiceImpl oAuthUserServiceImpl;
+	@Autowired
+	private OAuthUserServiceImpl oAuthUserServiceImpl;
 	
 	// 필터 클래스 주입
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
+	
+	@Autowired
+	private OAuthSuccessHandler oAuthSuccessHandler;
 	
 	// HttpSecurity http : 스프링 시큐리티에서 웹 보안 설정을 구성하기 위해 제공하는 보안 빌더 객체
 	// 이 객체에 여러 보안 옵션을 메서드 체이닝 방식으로 선언하면, 최종적으로 필터 체인이 생성된다
@@ -54,8 +62,16 @@ public class WebSecurityConfig {
 			// http://localhost:5000/oauth2/callback/*으로 들어오는 요청을 redirectionEndpoint에 설정된 곳으로 리다이렉트하라는 뜻
 			// 아무 주소도 넣지 않았다면 baseUri인 "http://localhost:5000으로 리다이렉트 한다
 			.and()
+			.authorizationEndpoint()
+			.baseUri("/auth/authorize") // 기본값이 아닌 /auth/authorize/github 형태로 요청
+			.and()
 			.userInfoEndpoint()	// OAuth2 인증이 성공한 후, 사용자 프로필 데이터를 엔드포인트로 지정
-			.userService(oAuthUserServiceImpl);  // 사용자 정보를 처리하는 서비스를 지정
+			.userService(oAuthUserServiceImpl)  // 사용자 정보를 처리하는 서비스를 지정
+			.and()
+			.successHandler(oAuthSuccessHandler)
+			.and()
+			.exceptionHandling()
+			.authenticationEntryPoint(new Http403ForbiddenEntryPoint());
 		
 		// 스프링 시큐리티 필터체인에 우리가 만든 필터를 삽입하는 위치를 지정하는 설정
 		// jwtAuthenticationFilter가 UsernamePasswordAuthenticationFilter 이전에 실행되는 것을 보장한다
@@ -70,7 +86,7 @@ public class WebSecurityConfig {
 		// CORS 설정을 담기 위한 객체 생성
 		CorsConfiguration configuration = new CorsConfiguration();
 		// 허용할 출처(Origin) 지정
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://todoapplication-frontend-env-env.eba-mx6qwm6u.ap-northeast-2.elasticbeanstalk.com"));
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
 		// 허용할 메서드 지정
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		// 허용할 요청 헤더 지정 ("*"는 모든 헤더를 허용하겠다는 의미)
