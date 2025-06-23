@@ -1,0 +1,13 @@
+server:
+  port: 10000
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+# OpenAPI 명세가 노출되는 경로 설정
+# 기본 값은 /v3/api-docs
+# 브라우저에서 확인 가능 : http://localhost:10000:/v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+# Swagger UI 웹페이지 접속 경로 설정
+# 기본 값은 /swagger-ui/index.html
+# 이 설정을 통해 /swagger-ui.html로 간편하게 접속 가능하다

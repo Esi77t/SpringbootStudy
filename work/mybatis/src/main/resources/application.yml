@@ -1,0 +1,25 @@
+server:
+  port: 10000
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver: org.h2.Driver
+    username: sa  # 기본 사용자
+    password:     # 생략가능(기본값 : ""(빈 문자열))
+  sql:
+    init:
+      mode: always # 앱 실행시 schema.sql 자동 실행
+
+h2:
+  console:
+    enabled: true
+
+mybatis:
+  mapper-locations: classpath:/mappers/**/*.yml  # Mybatis 매퍼 XML파일 위치
+  # 스프링부트에서는 resources폴더가 자동으로 classpath에 포함된다
+  type-aliases-package: com.example.mybatis.domain  # DTO/VO 클래스 경로 설정
+  # XML에서 이 경로 내의 클래스들은 자동으로 별칭이 등록된다
+  configuration:
+    map-underscore-to-camel-case: true  # DB 컬럼 명과 자바 필드명 자동 매핑
+	# user_id -> userId
